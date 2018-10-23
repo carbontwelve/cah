@@ -24,11 +24,11 @@ class SeedCards extends Seeder
      * Run the database seeds.
      *
      * @return void
+     * @throws Exception
      */
     public function run()
     {
         $files = $this->filesystem->files(__DIR__.DIRECTORY_SEPARATOR.'decks');
-
         foreach ($files as $json){
             $this->importJson(json_decode($json->getContents()));
         }
@@ -47,7 +47,8 @@ class SeedCards extends Seeder
             $deckModel = new \App\Deck(['name' => $deck->name]);
 
             if (! $deckModel->save()){
-                throw new Exception('Unable to save deck, exiting');
+                $this->command->getOutput()->writeln('[<error>!</error>] Unexpected issue while writing to database, cancelling job and exiting.');
+                throw new Exception('Unable to save App\Deck model: ['. $deckModel->toJson() .']');
             }
 
             foreach ($deck->black as $id){

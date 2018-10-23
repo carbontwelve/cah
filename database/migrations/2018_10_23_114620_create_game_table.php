@@ -16,6 +16,14 @@ class CreateGameTable extends Migration
         Schema::create('game', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
+            $table->boolean('private')->default(false);
+            $table->unsignedInteger("max_score")->default(8);
+            $table->unsignedInteger("max_rounds")->default(10);
+            $table->text('decks')->default(''); // comma delimited
+            $table->unsignedInteger('created_by');
+
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
+
         });
     }
 
